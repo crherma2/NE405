@@ -16,6 +16,11 @@ class Data(object):
     def add_datapt(self, pt):
         self.pts.append(pt)
 
+class Plot(object):
+    def __init__(self, x, y):
+        self.x=x
+        self.y=y
+
 
 def main(filename):
 
@@ -33,6 +38,7 @@ def main(filename):
             idx = 0
             for key in sline:              
                 data_dict.update({key:Data(key,idx)})
+                idx +=1
             i +=1
             continue
 
@@ -40,14 +46,22 @@ def main(filename):
         # for all other lines append data points
         sline=lines[i].split()
         for key in data_dict.keys():
+            print key
             data_dict[key].add_datapt(sline[data_dict[key].idx])
-
+            
 
         i +=1
-
-    print data_dict['time'].name
-    print data_dict['time'].idx
-    print data_dict['time'].pts
+    
+    # create plot objects
+    for key in data_dict.keys():
+        if key == 'time':
+            continue
+        
+        x = data_dict['time'].pts
+        y = data_dict[key].pts
+        plot_dict.update({key:Plot(x,y)})
+    
+    print plot_dict["Pp"].y
 
 
 if __name__ == '__main__':
