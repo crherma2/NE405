@@ -62,6 +62,8 @@ def main(filename, xname, yname):
     # read in file
     with open(filename,'r') as fh:
         lines=fh.read().splitlines()
+    if lines[0].split()[0] != 'time':
+        del lines[0]
 
     # correct keywords in header
     for key in name_dict.keys():
