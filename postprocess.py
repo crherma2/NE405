@@ -50,7 +50,7 @@ class Plot(object):
 
        call(['gnuplot',outfile+'.plot'])
 
-def main(filename):
+def main(filename, xname, yname):
 
     # load in names file
     with open('names.txt','r') as fh:
@@ -67,6 +67,13 @@ def main(filename):
     for key in name_dict.keys():
         keyns = key.replace(' ','')
         lines[0] = lines[0].replace(key, keyns)
+        if key == xname:
+            xname = keyns
+        elif key == yname:
+            yname = keyns
+        else:
+            name_dict.pop(key)
+            continue
         name_dict.update({keyns:name_dict.pop(key)}) # change key in name dictionary to no spaces
 
     # looping through lines
@@ -77,8 +84,9 @@ def main(filename):
         if i==0:
             sline=lines[i].split()
             idx = 0
-            for key in sline:              
-                data_dict.update({key:Data(name_dict[key],idx)})
+            for key in sline:
+                if name_dict.has_key(key):
+                    data_dict.update({key:Data(name_dict[key],idx)})
                 idx +=1
             i +=1
             continue
@@ -91,15 +99,15 @@ def main(filename):
         i +=1 # next line
     
     # create plot objects
-    for key in data_dict.keys():
-        if key == 'time':
-            continue
+#   for key in data_dict.keys():
+#       if key == 'time':
+#           continue
         
-        x = data_dict['time'].pts
-        xlabel = data_dict['time'].name
-        y = data_dict[key].pts
-        ylabel = data_dict[key].name
-        plot_dict.update({key:Plot(x, xlabel, y, ylabel)})
+    x = data_dict[xname].pts
+    xlabel = data_dict[xname].name
+    y = data_dict[yname].pts
+    ylabel = data_dict[yname].name
+    plot_dict.update({key:Plot(x, xlabel, y, ylabel)})
     
     # run plots
     for key in plot_dict.keys():
@@ -107,4 +115,6 @@ def main(filename):
 
 if __name__ == '__main__':
     filename=sys.argv[1]
-    main(filename)
+    xname = sys.argv[2]
+    yname = sys.argv[3]
+    main(filename, xname, yname)
